@@ -79,7 +79,7 @@ def login():
         rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
 
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+        if len(rows) != 1 or not check_password_hash(rows[0]    ["hash"], request.form.get("password")):
             return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
@@ -108,13 +108,45 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
-    return apology("TODO")
+    if request.method=="GET":
+        return render_template("quote.html")
+    if request.method == "POST":
+        symbol = request.form.get("symbol")
+        quote = lookup(symbol)
+        if quote == None:
+            return apology("Symbol not found",404)
+        else:
+            return render_template("quoted.html",quote=quote)
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    session.clear()
     """Register user"""
-    return render_template("register.html")
+    if request.method=="POST":
+        if not request.form.get("username"):
+            return apology("You must provide username",403)
+        elif not request.form.get("password"):
+            return apology("You must provide a password",403)
+        elif not request.form.get("confirmation"):
+            return apology("Please confirm your password",403)
+        elif request.form.get("password") != request.form.get("confirmation"):
+            return apology("Passwords do not match",403)
+        elif len(request.form.get("password")) < 8:
+            return apology("Password should be greater than 8 characters")
+        elif len(db.execute("SELECT * FROM users WHERE username = ?",request.form.get("username"))) !=0 :
+            return apology("Username already exists")
+        
+        db.execute("INSERT INTO users (username,hash) VALUES(?,?)",request.form.get("username"),generate_password_hash(request.form.get("password")))
+
+        rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
+
+        session["user_id"] = rows[0]["id"]
+
+        return redirect("/")
+
+    else:
+        return render_template("register.html")
 
 
 @app.route("/sell", methods=["GET", "POST"])

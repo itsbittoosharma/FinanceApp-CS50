@@ -1,12 +1,13 @@
 import os
 import requests
 import urllib.parse
-
+from cs50 import SQL
 from flask import redirect, render_template, request, session
 from functools import wraps
 
+db = SQL("sqlite:///finance.db")
 
-def apology(message, code=400):
+def apology(message, code=400,db=db):
     """Render message as an apology to user."""
     def escape(s):
         """
@@ -18,7 +19,7 @@ def apology(message, code=400):
                          ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
             s = s.replace(old, new)
         return s
-    return render_template("apology.html", top=code, bottom=escape(message)), code
+    return render_template("apology.html", top=code, bottom=escape(message),db=db), code
 
 
 def login_required(f):
