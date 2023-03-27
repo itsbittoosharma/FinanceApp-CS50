@@ -53,6 +53,7 @@ def index():
     """Show portfolio of stocks"""
     return render_template(
         "index.html",
+        db=db,
         cash=cash,
         currHoldings=currHoldings,
         userStocks=userStocks,
@@ -107,7 +108,11 @@ def buy():
 @login_required
 def history():
     """Show history of transactions"""
-    return apology("TODO")
+    transactions = db.execute("SELECT * FROM transactions WHERE id=?",
+                              session["user_id"])
+    return render_template("history.html",
+                           db=db,
+                           transactions=transactions)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -119,7 +124,7 @@ def login():
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-        
+
         # Ensure username was submitted
         if not request.form.get("username"):
             return apology("must provide username", 403)

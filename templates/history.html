@@ -1,0 +1,43 @@
+{%extends "layout.html"%}
+{%block title%}
+History
+{%endblock%}
+
+{%block main%}
+
+<h1>Transactions</h1>
+
+<table class="table table-striped">
+    <thead>
+        <th>Date & Time</th>
+        <th>Symbol</th>
+        <th>Buy/Sell</th>
+        <th>Shares</th>
+        <th>Price</th>
+        <th>Total</th>
+    </thead>
+    {% for stocks in transactions %}
+    <tr>
+        <td>
+            {{stocks["timestamp"]}}
+        </td>
+        <td>
+            {{stocks["symbol"]}}
+        </td>
+        <td>
+            {{stocks["method"].upper()}}
+        </td>
+        <td>
+            {{stocks["shares"] | abs}}
+        </td>
+        <td>
+            {{stocks["price"] | usd}}
+        </td>
+        <td>
+            {{ (stocks["price"]*stocks["shares"]) | usd}}
+        </td>
+    </tr>
+    {%endfor%}
+</table>
+
+{%endblock%}
