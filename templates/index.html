@@ -1,0 +1,41 @@
+{%extends "layout.html"%}
+{%block title%}
+Home
+{%endblock%}
+
+{%block main%}
+
+<h1>Holdings</h1>
+<br>
+<p>
+    <b>Total Cash : </b> {{cash | usd}}
+</p>
+<p>
+    <b>Total Holdings: </b> {{(cash+currHoldings) | usd}}
+</p>
+<table class="table table-striped">
+    <thead>
+        <th>Symbol</th>
+        <th>Shares</th>
+        <th>Price</th>
+        <th>Total</th>
+    </thead>
+    {% for stocks in userStocks %}
+    <tr>
+        <td>
+            {{stocks["symbol"]}}
+        </td>
+        <td>
+            {{ stocks["shares"]}}
+        </td>
+        <td>
+            {{ currPriceOfStocks[stocks["symbol"]] | usd}}
+        </td>
+        <td>
+            {{ (currPriceOfStocks[stocks["symbol"]]*stocks["shares"]) | usd}}
+        </td>
+    </tr>
+    {%endfor%}
+</table>
+
+{%endblock%}
