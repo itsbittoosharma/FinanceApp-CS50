@@ -5,7 +5,13 @@ Quote
 {%endblock%}
 
 {%block main%}
-{% for key in quote %}
-{{key}} - {{quote[key]}}<br>
-{% endfor %}
+
+<div>
+    <p class="pt-5"> 
+    {% for key in quote %}
+    {{key.upper()}} - {{quote[key]}} <br>
+    {% endfor %}
+    </p>
+</div>
+
 {%endblock%}
