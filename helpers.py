@@ -42,7 +42,7 @@ def lookup(symbol):
     # Contact API
     try:
         api_key = os.environ.get("API_KEY")
-        url = f"https://cloud.iexapis.com/stable/stock/{urllib.parse.quote_plus(symbol)}/quote?token={api_key}"
+        url = f"http://api.marketstack.com/v1/intraday?access_key={api_key}&symbols={symbol}&limit=1"
         response = requests.get(url)
         response.raise_for_status()
     except requests.RequestException:
@@ -51,10 +51,12 @@ def lookup(symbol):
     # Parse response
     try:
         quote = response.json()
+        print(quote)
         return {
-            "name": quote["companyName"],
-            "price": float(quote["latestPrice"]),
-            "symbol": quote["symbol"]
+            # "name": quote["companyName"],
+            "name" : "",
+            "price": float(quote["data"][0]["close"]),
+            "symbol": quote["data"][0]["symbol"]
         }
     except (KeyError, TypeError, ValueError):
         return None
